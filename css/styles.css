@@ -25,7 +25,7 @@ body {
     text-decoration: none;
 }
 
-.connect-btn {
+#connect-btn {
     background-color: #4CAF50;
     color: white;
     padding: 4px 16px;
@@ -35,7 +35,7 @@ body {
     font-size: 1rem;
 }
 
-.connect-btn:hover {
+#connect-btn:hover {
     background-color: #45a049;
 }
 
@@ -50,6 +50,7 @@ body {
 /* Custom WinBox styles */
 .wb-body {
     background: #f5f5f5;
+    overflow: hidden !important; /* Disable scrollbars */
 }
 
 .winbox.no-full .wb-full {
@@ -58,4 +59,103 @@ body {
 
 .winbox {
     background: #2d2d2d;
+}
+
+.wb-body > div {
+    overflow: hidden !important;  /* Ensure content doesn't scroll */
+}
+
+/* Progress bar styles */
+.progress-container {
+    background: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.progress-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+progress {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+progress::-webkit-progress-bar {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+}
+
+progress::-webkit-progress-value {
+    background-color: #4CAF50;
+    border-radius: 4px;
+   /* transition: width 0.3s ease; */
+}
+
+#adc1-value, #adc2-value, #dac1-value, #dac2-value, #dac1-slider-value, #dac2-slider-value {
+    display: inline-block;
+    margin-left: 10px;
+    font-family: monospace;
+    color: #333;
+}
+
+/* Control styles */
+.control-container {
+    background: #fff;
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Slider styling */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #f0f0f0;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+/* Select and button styling */
+select, button {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background: #45a049;
+}
+
+select {
+    background: white;
+}
+
+select:focus, button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }

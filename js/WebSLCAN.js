@@ -26,7 +26,7 @@ class WebSLCAN {
         this.onMessageCallback = null;
     }
 
-    async connect(baudRate = 115200) {
+    async connect(baudRate = 1000000) {
         try {
             // Request a port and open a connection
             this.port = await navigator.serial.requestPort();
@@ -162,7 +162,7 @@ class WebSLCAN {
         let payloadLength = Number(text.substr(3, 1));
         let payload = this.hexToBytes(text.substr(4));
     
-        console.log(`Received frame ID: ${frameID.toString(16)}, length: ${payloadLength}, payload: ${payload}`);
+        //console.log(`Received frame ID: ${frameID.toString(16)}, length: ${payloadLength}, payload: ${payload}`);
     
         if (payloadLength !== payload.length) {
           throw Error(`Wrong length for received frame: ${text}`);
