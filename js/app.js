@@ -10,7 +10,7 @@ wSLCAN.setOnDisconnectCallback(() => {
 
 wSLCAN.setOnMessageCallback((id, data) => {
 
-    if (id == 0x203 && data.length >= 4) {
+    if (id == 0x201 && data.length >= 4) {
         // Pedal input ADC values
         let ADC1 = ((data[0] << 8) | data[1]) * (5.0 / 3030);
         let ADC2 = ((data[2] << 8) | data[3]) * (5.0 / 3030);
@@ -30,6 +30,21 @@ wSLCAN.setOnMessageCallback((id, data) => {
     }
 });
 
+function sendingLoop() {
+    // values between 0 and 5000 for 0V to 5V
+    DAC1 = Math.floor(parseFloat(document.getElementById('dac1-slider').value) * 1000);
+    DAC2 = Math.floor(parseFloat(document.getElementById('dac2-slider').value) * 1000);
+
+    // Your sending loop logic here
+    wSLCAN.sendSingleFrame(0x200, [
+        (DAC1 >> 8) & 0xFF,
+        DAC1 & 0xFF,
+        (DAC2 >> 8) & 0xFF,
+        DAC2 & 0xFF
+    ]);
+    console.log(`Sent DAC1: ${DAC1}, DAC2: ${DAC2}`);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const pedalInputsContent = document.createElement('div');
     pedalInputsContent.innerHTML = `
@@ -45,19 +60,19 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>      
     `;
 
-    const pedalOutputsContent = document.createElement('div');
-    pedalOutputsContent.innerHTML = `
-        <div style="padding: 20px;">
-            <div class="progress-container">
-                <label for="dac1-progress">DAC1:<span id="dac1-value">0.00V</span></label>
-                <progress id="dac1-progress" value="0" max="5" style="width: 100%; height: 20px; margin: 10px 0;"></progress>
-            </div>
-            <div class="progress-container" style="margin-top: 20px;">
-                <label for="dac2-progress">DAC2:<span id="dac2-value">0.00V</span></label>
-                <progress id="dac2-progress" value="0" max="5" style="width: 100%; height: 20px; margin: 10px 0;"></progress>
-            </div>
-        </div>
-    `;
+//    const pedalOutputsContent = document.createElement('div');
+//    pedalOutputsContent.innerHTML = `
+//        <div style="padding: 20px;">
+//            <div class="progress-container">
+//                <label for="dac1-progress">DAC1:<span id="dac1-value">0.00V</span></label>
+//                <progress id="dac1-progress" value="0" max="5" style="width: 100%; height: 20px; margin: 10px 0;"></progress>
+//            </div>
+//            <div class="progress-container" style="margin-top: 20px;">
+//                <label for="dac2-progress">DAC2:<span id="dac2-value">0.00V</span></label>
+//                <progress id="dac2-progress" value="0" max="5" style="width: 100%; height: 20px; margin: 10px 0;"></progress>
+//            </div>
+//       </div>
+//    `;
 
     const pedalControlsContent = document.createElement('div');
     pedalControlsContent.innerHTML = `
@@ -78,14 +93,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="range" id="dac2-slider" min="0" max="5" step="0.01" value="0" 
                     style="width: 100%; margin-bottom: 20px;"
                     oninput="document.getElementById('dac2-slider-value').textContent = this.value + 'V'">
-
+                <!--
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <select id="dac-mode" style="flex: 1;">
                         <option value="copy">Copy</option>
                         <option value="override">Override</option>
                     </select>
                     <button id="set-dac-mode" style="width: 100px;">Set Mode</button>
-                </div>
+                </div> 
+                -->
             </div>
         </div>
     `;
@@ -105,26 +121,27 @@ document.addEventListener('DOMContentLoaded', () => {
         nooverflow: true
     });
 
-    const pedalOutputsBox = new WinBox({
-        title: "Pedal Outputs",
-        mount: pedalOutputsContent,
-        class: ["no-full"],
-        x: "340px",
-        y: "60px",
-        width: "300px",
-        height: "260px",
-        root: document.body,
-        top: "40px",
-        minwidth: "300px",
-        minheight: "260px",
-        nooverflow: true
-    });
+//    const pedalOutputsBox = new WinBox({
+//        title: "Pedal Outputs",
+//        mount: pedalOutputsContent,
+//        class: ["no-full"],
+//        x: "340px",
+//        y: "60px",
+//        width: "300px",
+//        height: "260px",
+//        root: document.body,
+//        top: "40px",
+//        minwidth: "300px",
+//        minheight: "260px",
+//        nooverflow: true
+//    });
 
     const pedalControlsBox = new WinBox({
         title: "Pedal Controls",
         mount: pedalControlsContent,
         class: ["no-full"],
-        x: "660px",
+        //x: "660px",
+        x: "340px",
         y: "60px",
         width: "300px",
         height: "260px",
@@ -139,5 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
 document.getElementById('connect-btn').addEventListener('click', async () => {
     await wSLCAN.connect();
     await wSLCAN.open(WebSLCAN.canSpeed._500K);
+    setInterval(sendingLoop, 100);
 });
 
